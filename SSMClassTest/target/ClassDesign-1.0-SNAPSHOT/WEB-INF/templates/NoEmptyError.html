@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>书籍已达上限</title>
+</head>
+<body>
+<input th:type="hidden" th:id="id" th:value="${id}" id="id">
+<h1>您借阅的书籍已达上限，请先归还再借阅！</h1>
+<script>
+  var id=document.getElementById("id").value;
+  setTimeout("javascript:location.href='/ClassDesign_war_exploded/student/'+id", 3000);
+</script>
+</body>
+</html>

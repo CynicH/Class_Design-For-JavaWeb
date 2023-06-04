@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <base href="<%=request.getContextPath()%>/"/>
+  <meta charset="UTF-8">
+  <title>学生借阅界面</title>
+  <link rel="stylesheet" th:href="@{/static/css/index_work.css}">
+</head>
+<body>
+
+<p>
+    <span style="color:snow" th:text="'欢迎用户：'+${loginUser}"></span><span><a th:href="@{/logout}" style="color: red">注销</a></span>
+</p>
+
+<table>
+  <tr>
+    <th>图书信息</th>
+  </tr>
+</table>
+<table>
+  <form th:action="@{'/student/book/borrowRequest'}" method="post" id="search" >
+  <tr>
+    <td th:text="图书名称"></td><td th:text="${book.bookName}"></td>
+      <input type="hidden" th:value="${book.bookName}" name="book.bookName">
+  </tr>
+  <tr>
+    <td th:text="图书展示"></td><td><img th:src="@{'/photo/'+${book.picture}}" style="width:100px; height: 100px;"/></td>
+  </tr>
+  <tr>
+    <td th:text="借阅日期"></td><td> <input type="hidden" th:text="${time}" name="time"></td>
+  </tr>
+
+
+  </tr>
+
+  <tr>
+    <td th:text="借阅天数"></td><td>
+    年： <span class="input-group-btn">
+      <button class="btn " id="num-jia" style="width:25px;border:1px solid #3366ff;color:#3366ff;background-color: #fff;margin-left:3px;" type="button">+</button>
+         </span>
+   <input type="text" id="input-num" class="form-control" style="width:35px;border:0px solid #fff;font-size:16px;color:#3366ff;text-align: center;" placeholder="年" value="0" name="year">
+    <span class="input-group-btn" >
+<button class="btn" id="num-jian"  style="width:25px;border:1px solid #9e9e9e;margin-right:3px;color:#9e9e9e;background-color: #fff;" type="button">—</button>
+         </span>
+
+      &nbsp月： <span class="input-group-btn">
+      <button class="btn " id="num-jia1" style="width:25px;border:1px solid #3366ff;color:#3366ff;background-color: #fff;margin-left:3px;" type="button">+</button>
+         </span>
+      <input type="text" id="input-num1" class="form-control" style="width:35px;border:0px solid #fff;font-size:16px;color:#3366ff;text-align: center;" placeholder="月" value="0" name="month">
+      <span class="input-group-btn" >
+<button class="btn" id="num-jian1"  style="width:25px;border:1px solid #9e9e9e;margin-right:3px;color:#9e9e9e;background-color: #fff;" type="button">—</button>
+         </span>
+    &nbsp日： <span class="input-group-btn">
+      <button class="btn " id="num-jia2" style="width:25px;border:1px solid #3366ff;color:#3366ff;background-color: #fff;margin-left:3px;" type="button">+</button>
+         </span>
+    <input type="text" id="input-num2" class="form-control" style="width:35px;border:0px solid #fff;font-size:16px;color:#3366ff;text-align: center;" placeholder="日" value="1" name="day">
+    <span class="input-group-btn" >
+<button class="btn" id="num-jian2"  style="width:25px;border:1px solid #9e9e9e;margin-right:3px;color:#9e9e9e;background-color: #fff;" type="button">—</button>
+         </span>
+</td>
+  </tr>
+    <tr>
+
+      <td>操作</td>
+      <td>
+        <input type="submit" value="确定借阅">
+      </td>
+    </tr>
+
+  </form>
+</table>
+<table>
+
+  <tr>
+    <th><a th:href="@{'/student/'+${loginUser}}">返回</a> </th>
+  </tr>
+</table>
+</body>
+<script>
+  var num_jia = document.getElementById("num-jia");
+  var num_jian = document.getElementById("num-jian");
+  var input_num = document.getElementById("input-num");
+  //加号单击事件
+  num_jia.onclick=function(){
+    if(input_num.value >= 5) {  //判断最高可加到5
+      input_num.value = 5;
+    }else {
+      input_num.value = parseInt(input_num.value) + 1;
+    }
+  }
+  //减号单击事件
+  num_jian.onclick=function(){
+    if(input_num.value <= 0) { //判断最低可减到0
+      input_num.value = 0;
+    }else {
+      input_num.value = parseInt(input_num.value) - 1; //执行-1
+    }
+  }
+
+
+
+  //
+  var num_jia1 = document.getElementById("num-jia1");
+  var num_jian1 = document.getElementById("num-jian1");
+  var input_num1 = document.getElementById("input-num1");
+  //加号单击事件
+  num_jia1.onclick=function(){
+    if(input_num1.value >= 11) {
+      input_num1.value = 11;
+    }else {
+      input_num1.value = parseInt(input_num1.value) + 1;
+    }
+  }
+  //减号单击事件
+  num_jian1.onclick=function(){
+    if(input_num1.value <= 0) {
+      input_num1.value = 0;
+    }else {
+      input_num1.value = parseInt(input_num1.value) - 1; //执行-1
+    }
+  }
+  //
+  var num_jia2 = document.getElementById("num-jia2");
+  var num_jian2 = document.getElementById("num-jian2");
+  var input_num2 = document.getElementById("input-num2");
+  //加号单击事件
+  num_jia2.onclick=function(){
+    if(input_num2.value >= 31) {
+      input_num2.value = 31;
+    }else {
+      input_num2.value = parseInt(input_num2.value) + 1;
+    }
+  }
+  //减号单击事件
+  num_jian2.onclick=function(){
+    if(input_num2.value <= 1) {
+      input_num2.value = 1;
+    }else {
+      input_num2.value = parseInt(input_num2.value) - 1; //执行-1
+    }
+  }
+</script>
+
+
+</html>

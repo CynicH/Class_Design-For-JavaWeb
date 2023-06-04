@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <base href="<%=request.getContextPath()%>/"/>
+  <meta charset="UTF-8">
+  <title>书籍查找信息</title>
+  <link rel="stylesheet" th:href="@{/static/css/index_work.css}">
+</head>
+<body>
+<p>
+  <span style="color:snow" th:text="'欢迎用户：'+${loginUser}"></span><span><a th:href="@{/logout}" style="color: red">注销</a></span>
+</p>
+<table>
+  <tr>
+    <th>图书列表</th>
+    <form th:action="@{'/student/book/search/'}" method="post" id="search" >
+      <th>书名：<input type="text" name="bookName"></th>
+      <th> 状态：<input type="text" name="status"></th>
+      <th><input type="submit" value="搜索"><a th:href="@{'/student/'+${loginUser}}">返回</a> </th>
+    </form>
+    <!--    <th th:each="book:${list}"><form th:href="@{'/teacher/book/search/'+${book.bookName}}" method="post" id="update_form" enctype="multipart/form-data">查找-->
+    <!--      <input type="text"><input type="submit" value="搜索">-->
+    <!--    </form></th>-->
+  </tr>
+  <tr>
+    <th>图书名称</th>
+    <th>图书展示</th>
+    <th>借阅状态</th>
+    <th>操作</th>
+  </tr>
+  <tr th:each="book:${list}">
+    <td th:text="${book.bookName}"></td>
+    <td><img th:src="@{'/photo/'+${book.picture}}" style="width:100px; height: 100px;"/></td>
+    <td th:text="'剩余'+${book.status}+'本'"></td>
+    <td>
+      <button class="animated-button-2" id="borrow"
+              onclick="return confirm('你确定要借阅该书吗')"><a th:href="@{'/student/book/borrow/'+${book.bookName}+'/'+${loginUser}}">借阅</a></button>
+    </td>
+  </tr>
+
+</table>
+<table>
+  <tr><form th:action="@{'/student/info/'+${loginUser}}">
+    <th><input type="submit" value="查看我的借阅信息"></th>
+  </form>
+
+  </tr>
+</table>
+
+
+</body>
+</html>

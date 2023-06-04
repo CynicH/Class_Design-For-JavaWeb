@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base href="<%=request.getContextPath()%>/"/>
+    <meta charset="UTF-8">
+    <title>学生信息管理</title>
+    <link rel="stylesheet" th:href="@{/static/css/index_work.css}">
+</head>
+<body>
+
+<p>
+    <span style="color:snow" th:text="'欢迎用户：'+${loginUser}"></span><span><a th:href="@{/logout}" style="color: red">注销</a></span>
+</p>
+
+<table>
+    <tr>
+        <th>学生信息列表</th>
+        <form th:action="@{'/teacher/student/search/'}" method="post" id="search">
+            <th>学号：<input type="text" name="studentId" id="sid"></th>
+            <th>姓名：<input type="text" name="studentName" id="sname"></th>
+            <th>借阅信息：<input type="text" name="borrowedBooks" id="scondition"><input type="submit" value="搜索"><a th:href="@{'/teacher/student'}">显示全部</a> </th>
+        </form>
+
+    </tr>
+    <tr>
+        <th>学生学号</th>
+        <th>学生姓名</th>
+        <th>借阅信息(点击查看具体信息)</th>
+        <th>操作</th>
+    </tr>
+    <tr th:each="student:${list}">
+        <td th:text="${student.studentId}"></td>
+        <td th:text="${student.studentName}"></td>
+        <td><a th:href="@{'/teacher/student/show/'+${student.studentId}}" th:text="'已借阅'+${student.borrowedBooks}+'本'"></a></td>
+        <td>
+            <a th:href="@{'/teacher/student/delete/'+${student.studentId}}" class="deleteItem" id="deleted"
+               onclick="return confirm('你确定要删除该学生信息吗')">删除</a>
+
+            <!--      <a  th:href="@{'/manager/Student/'+${Student.StudentName}}">修改</a>-->
+        </td>
+    </tr>
+
+</table>
+<table>
+    <th th:text="${NoResult}">
+    </th>
+</table>
+<table>
+    <tr>
+        <th>添加学生信息</th>
+        <td>
+            <form th:action="@{/teacher/student/add}" method="post" id="reg_form" enctype="multipart/form-data">
+                学号:<input type="text" name="studentId" id="studentId">
+                <br>
+                <span id="name_err" class="text_error" style="display:none">学号已经存在，请重新填写！<br></span>
+                姓名:<input type="text" name="studentName" id="studentName"><br>
+                <span id="name_err1" class="text_error" style="display:none">姓名不能为空！<br></span>
+                <br>
+                <input type="submit" value="添加" id="submit">
+            </form>
+        </td>
+        <input th:value="${studentIds}" type="hidden" name="studentIds" id="studentIds">
+</table>
+<!--<script>-->
+<!--    var id=document.getElementById("sid").value;-->
+<!--    var name=document.getElementById("snamename").value;-->
+<!--    var condition=document.getElementById("scondition").value;-->
+<!--    var sub=document.getElementById("search");-->
+<!--    sub.onsubmit=function(){-->
+<!--        var flag=false;-->
+<!--        var flag=!((id.value=='')&&(name.value=='')&&(condition.value==''));-->
+<!--        alert(flag);-->
+<!--        if(flag==false){-->
+<!--            alert("请至少输入一个查询条件！");-->
+<!--        }-->
+<!--        return flag;-->
+<!--    }-->
+<!--</script>-->
+<table>
+    <th><a th:href="@{/teacher}">返回主页</a> </th>
+</table>
+<script>
+    var studentIds=document.getElementById("studentIds").value;
+    var InputStudent=document.getElementById("studentId");
+    InputStudent.onblur=checkStudentId;
+    function checkStudentId() {
+        var StudentId = InputStudent.value.trim();
+        var flag=1;
+        if(studentIds.includes(StudentId)){
+            document.getElementById("name_err").style.display='';
+            flag=0;
+            return flag;
+        }else{
+            document.getElementById("name_err").style.display='none';
+            return flag;
+        }
+    }
+    var InputStudentName=document.getElementById("studentName");
+    InputStudentName.onblur=checkStudentName;
+    function checkStudentName() {
+        var flag=1;
+        if(InputStudentName.value==''){flag=0;
+            document.getElementById("name_err1").style.display='';
+        }
+        else{
+            flag=1;document.getElementById("name_err1").style.display='none';
+        }
+        return flag;
+
+
+    }
+    //获取表单对象
+    var regForm=document.getElementById("reg_form");
+    regForm.onsubmit=function(){
+        var flag=  checkStudentName()&&checkStudentId();
+        if(flag==false){
+            alert("输入的数据有误，请检查数据！")
+        }
+        return flag;
+    }
+</script>
+</body>
+</html>

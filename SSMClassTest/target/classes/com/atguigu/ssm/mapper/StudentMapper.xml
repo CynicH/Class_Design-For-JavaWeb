@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.ssm.mapper.StudentMapper">
+<!--//插入新学生
+    void Insert(@Param("id")Integer id, @Param("name")String name);-->
+    <insert id="Insert">
+        insert into student
+        values (#{studentId},#{studentName},null,null);
+    </insert>
+<!--        //连携设置学生的id
+    void addNewUserByStudent(@Param("studentId") String studentId,@Param("studentId1") String studentId1);-->
+    <insert id="addNewUserByStudent">
+        insert into user
+        values (#{studentId},#{studentId1},"学生");
+    </insert>
+
+<!--    //显示所有学生
+    List<student> getAllStudent();-->
+<select id="getAllStudent" resultType="student">
+    SELECT  student.`student_id` as studentId,student.`student_name` as studentName,COUNT(borrow.`student_id`) as borrowedBooks
+    FROM student LEFT JOIN borrow
+        ON student.`student_id`=borrow.`student_id`
+    GROUP BY student.`student_id`;
+</select>
+<!--//查找学生(借阅数量查询)
+List<student> searchStudentByNumber(@Param("studentId") Integer studentId,
+                                        @Param("studentName") String studentName,
+                                        @Param("borrowedBooks") Integer borrowedBooks
+);-->
+    <select id="searchStudentByNumber" resultType="borrowResult">
+        select * from(
+        SELECT  student.`student_id` as studentId,student.`student_name` as studentName,COUNT(borrow.`student_id`) as borrowedBooks
+        FROM student LEFT JOIN borrow
+                               ON student.`student_id`=borrow.`student_id`
+        GROUP BY student.`student_id`)as a
+
+        <trim prefix="where" suffixOverrides="and">
+            <if test="studentId!=null and studentId!=''"> a.studentId= #{studentId} and </if>
+            <if test="studentName!= null and studentName!=''"> a.studentName =#{studentName} and </if>
+            <if test="borrowedBooks!=null and borrowedBooks!=''"> a.borrowedBooks=#{borrowedBooks} and </if>
+        </trim>
+        ;
+    </select>
+<!--    //查找借阅了某书的学生
+    List<student> searchStudentByName(@Param("studentId")String studentId,@Param("studentName") String studentName,@Param("borrowedBooks") String borrowedBooks);-->
+    <select id="searchStudentByName" resultType="borrowResult">
+        SELECT student.`student_id` as studentId,student.`student_name` as studentName,book.`book_name` as borrowedBooks,borrow.`borrow_time` as borrowTime,borrow.`deadline` as deadline FROM student,book,borrow
+
+            <trim prefix="where" suffixOverrides="and">
+                <if test="studentId!=null and studentId!=''"> student.`student_id`= #{studentId} and </if>
+                <if test="studentName!= null and studentName!=''"> student.`student_name` like '${studentName}%' and </if>
+                <if test="borrowedBooks!=null and borrowedBooks!=''"> book.`book_name` like  '${borrowedBooks}%' and </if>
+<if test="1==1">student.`student_id`=borrow.`student_id` AND book.`book_id`=borrow.`book_id` </if>
+            </trim>
+
+
+
+    </select>
+<!--    //添加新学生
+    void addNew(@Param("studentId") String studentId, @Param("studentName")  String studentName);-->
+    <insert id="addNew">
+        insert into student
+        values (#{studentId},#{studentName},null,null);
+    </insert>
+<!--        //根据Id删除学生
+    void deleteStudentById(@Param("id") String id);-->
+    <delete id="deleteStudentById">
+        delete
+        from student
+        where student.`student_id`=#{id};
+    </delete>
+<!--        //查询学生的全部借阅id
+    List<String> checkStudentBorrowId(@Param("studentId") String studentId);-->
+    <select id="checkStudentBorrowId1" resultType="java.lang.String">
+        select borrow1_id
+        from student where student_id=#{studentId};
+    </select>
+    <select id="checkStudentBorrowId2" resultType="java.lang.String">
+        select borrow2_id
+        from student where student_id=#{studentId};
+    </select>
+<!--    //显示该学生的借阅信息-->
+<!--    List<loan> getLoanByStudentId();-->
+<!--    <select id="getAllStudent" resultType="loan">-->
+<!--        SELECT student.`student_id`,student_name,book.`book_name`,borrow_time,deadline-->
+<!--        FROM borrow,student,book-->
+<!--        WHERE student.`student_id`=borrow.`student_id` AND borrow.`book_id`=book.book_id and student.`student_id`=#{studentId};-->
+<!--    </select>-->
+<!--        //查询学生的借阅书籍
+    List<String> CheckStudentBorrowBooks(@Param("studentId") String studentId);-->
+    <select id="CheckStudentBorrowBooks" resultType="java.lang.String">
+        SELECT book.`book_name`
+        FROM student,borrow,book
+        WHERE  book.`book_id`=borrow.`book_id` AND student.`student_id`=borrow.`student_id` AND student.`student_id`=#{studentId}
+    </select>
+<!--        //根据学生的名字查询id
+    List<String> CheckStudentIdByName(@Param("studentName")  String studentName);-->
+    <select id="CheckStudentIdByName" resultType="java.lang.String">
+        select student_id from student where student_name=#{studentName};
+    </select>
+<!--    //没传借阅信息时候的查询学生
+    List<borrowResult> searchStudentByNoBorrowMessage(@Param("studentId") String studentId,@Param("studentName")  String studentName);-->
+<!--    书的名称不能显示！！！-->
+    <select id="searchStudentByNoBorrowMessage" resultType="borrowResult">
+        SELECT student.`student_id` AS studentId,student.`student_name` AS studentName,COUNT(borrow.`borrow_id`) as borrowedBooks
+        FROM student LEFT JOIN borrow ON student.`student_id`=borrow.`student_id`
+      <trim prefix="where" suffixOverrides="and">
+        <if test="studentId!=null and studentId!=''"> student.`student_id`= #{studentId} and </if>
+        <if test="studentName!= null and studentName!=''"> student.`student_name` like '${studentName}%' and </if>
+    </trim>
+        GROUP BY student.`student_id`
+
+    </select>
+
+</mapper>

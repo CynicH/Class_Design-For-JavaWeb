@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.ssm.mapper.BorrowMapper">
+<!--    //根据学生Id和书名删除借阅信息
+    void deleteBorrowMessage(@Param("borrowId)")String borrowId);-->
+<delete id="deleteBorrowMessage">
+    delete
+    from borrow
+where borrow_id=#{borrowId};
+</delete>
+<!--     //清除学生状态栏的借阅信息
+    void deleteBorrowIdFromStudent(@Param("studentId") String student,@Param("borrowId") String borrowId);-->
+    <update id="deleteBorrowIdFromStudent">
+        <if test="borrowId!=null and borrowId!=''">
+        update student
+        set borrow1_id = null
+        <trim prefix="where" suffixOverrides="and">
+            <if test="studentId!=null and studentId!=''"> student.`student_id`= #{studentId} and </if>
+            <if test="borrowId!=null and borrowId!=''"> borrow1_id=#{borrowId}; and </if>
+        </trim></if>
+        update student set borrow1_id = borrow1_id;
+    </update>
+<!--        //清除学生状态栏的借阅信息2
+    void deleteBorrowIdFromStudent2(@Param("studentId") String studentId,@Param("borrowId") String borrowId);-->
+    <update id="deleteBorrowIdFromStudent2">
+        <if test="borrowId!=null and borrowId!=''">
+            update student
+            set borrow2_id = null
+            <trim prefix="where" suffixOverrides="and">
+                <if test="borrowId!=null and borrowId!=''"> borrow2_id=#{borrowId}; and </if>
+            </trim>
+</if>
+        update student set borrow2_id = borrow2_id;
+    </update>
+
+<!--    //图书存储量加一-->
+<!--    void bookBack(@Param("bookName") String borrowResult);&ndash;&gt;-->
+    <update id="bookBack">
+        update book
+        set  status=status+1
+        where book_name=#{bookName};
+    </update>
+<!--        //查询借阅id号
+    String CheckBorrowId(@Param("studentId") String student, @Param("bookName") String borrowResult);-->
+    <select id="CheckBorrowId" resultType="java.lang.String">
+        SELECT borrow_id
+        FROM borrow,book,student
+        <trim prefix="where" suffixOverrides="and">
+            <if test="studentId!=null and studentId!=''"> student.`student_id`= #{studentId} and </if>
+            <if test="bookName!=null and bookName!=''"> book.`book_name`=#{bookName} and </if>
+<if test="1==1">student.`student_id`=borrow.`student_id` AND borrow.`book_id`=book.`book_id` </if>
+        </trim>
+
+
+    </select>
+<!--        //查询该学号学生的借阅信息1
+    List<borrowResult> checkItemById1(@Param("studentId") String studentId);
+   -->
+    <select id="checkItemById1" resultType="borrowResult">
+        SELECT student.`student_name`,book.`book_name` as borrowedBooks,borrow.`borrow_time` as borrowTime ,borrow.`deadline`as deadline
+        FROM student,book,borrow
+        WHERE student.`borrow1_id`=borrow.`borrow_id` AND book.`book_id`=borrow.`book_id`
+and student.`student_id`=#{studentId}
+;
+    </select>
+<!--     //查询该学号学生的借阅信息2
+    List<borrowResult> checkItemById2(@Param("studentId") String studentId);-->
+    <select id="checkItemById2" resultType="borrowResult">
+        SELECT student.`student_name`,book.`book_name` as borrowedBooks,borrow.`borrow_time` as borrowTime ,borrow.`deadline`as deadline
+        FROM student,book,borrow
+        WHERE student.`borrow2_id`=borrow.`borrow_id` AND book.`book_id`=borrow.`book_id`
+          and student.`student_id`=#{studentId}
+        ;
+    </select>
+<!--        //显示该学号学生的借阅信息（学生端）
+    List<borrowResult> showBorrowInfoById(@Param("studentId") String studentId);-->
+    <select id="showBorrowInfoById" resultType="borrowResult">
+        SELECT book.`book_name` AS borrowedBooks,book.`picture` AS picture,borrow.`borrow_time` AS borrowTime,borrow.`deadline` AS deadline
+        FROM student,book,borrow WHERE student.`student_id`=borrow.`student_id` AND book.`book_id`=borrow.`book_id`
+        AND student.`student_id`=#{studentId};
+    </select>
+<!--        //图书存储量减一
+    void bookBorrow(@Param("bookName") String bookName);-->
+    <update id="bookBorrow">
+        update book
+        set  status=status-1
+        where book_name=#{bookName};
+    </update>
+<!--        //新增借阅信息
+   void InsertNewBorrow(@Param("studentId") String studentId,
+                        @Param("bookId") Integer bookId,
+                        @Param("borrowTime")String borrowTime,
+                        @Param("deadline")String deadline);-->
+    <insert id="InsertNewBorrow">
+        insert into borrow
+        values (null,#{studentId},#{bookId},#{borrowTime},#{deadline});
+    </insert>
+<!--       //查询新插入的借阅信息id号
+    String CheckIdByCondition(@Param("studentId") String studentId,
+                              @Param("bookId") Integer bookId,
+                              @Param("borrowTime")String borrowTime,
+                              @Param("deadline")String deadline);-->
+    <select id="CheckIdByCondition" resultType="java.lang.String">
+        select borrow_id FROM borrow
+           where
+               borrow.`student_id`=#{studentId} and
+               borrow.`book_id`=#{bookId} and
+               borrow.`borrow_time`=#{borrowTime} and
+               borrow.`deadline`=#{deadline};
+    </select>
+<!--   //借阅后更新学生信息
+    void updateAfterBorrow1(@Param("studentId") String studentId,@Param("borrowId") String borrowId);
+    //借阅后更新学生信息
+    void updateAfterBorrow2(@Param("studentId") String studentId,@Param("borrowId") String borrowId); -->
+    <update id="updateAfterBorrow1">
+        update student
+        set  student.`borrow1_id`= #{borrowId}
+        where student.`student_id`=#{studentId};
+    </update>
+    <update id="updateAfterBorrow2">
+        update student
+        set  student.`borrow2_id`= #{borrowId}
+        where student.`student_id`=#{studentId};
+    </update>
+</mapper>

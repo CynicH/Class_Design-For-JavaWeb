@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <base href="<%=request.getContextPath()%>/"/>
+    <meta charset="UTF-8">
+    <title>学生信息</title>
+  <link rel="stylesheet" th:href="@{/static/css/index_work.css}">
+</head>
+<body>
+<p>
+  <span style="color:snow" th:text="'欢迎用户：'+${loginUser}"></span><span><a th:href="@{/logout}" style="color: red">注销</a></span>
+</p>
+<table>
+  <tr>
+    <th>图书列表</th>
+    <form th:action="@{'/teacher/book/search/'}" method="post" id="search" >
+      <th>书名：<input type="text" name="bookName"></th>
+      <th> 状态：<input type="text" name="status"></th>
+      <th><input type="submit" value="搜索"><input type="submit"  value="显示全部"></th>
+    </form>
+  </tr>
+  <tr>
+    <th>学生姓名</th>
+    <th>借阅书籍</th>
+    <th>借阅日期</th>
+    <th>归还日期</th>
+  </tr>
+  <tr th:each="borrowResult:${list}">
+    <td th:text="${borrowResult.studentName}"></td>
+    <td th:text="${borrowResult.borrowedBooks}"></td>
+    <td th:text="${borrowResult.borrowTime}"></td>
+    <td th:text="${borrowResult.deadline}"></td>
+  </tr>
+  <table>
+    <tr>
+      <th><a th:action="@{'/student/info/'+${loginUser}}">查看我的借阅信息</a></th>
+    </tr>
+  </table>
+</table>
+</body>
+</html>

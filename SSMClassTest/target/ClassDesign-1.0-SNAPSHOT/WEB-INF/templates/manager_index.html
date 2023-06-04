@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>图书管理员主页</title>
+    <link rel="stylesheet" th:href="@{/static/css/index_work.css}">
+</head>
+<body>
+<p>
+    <span style="color:snow" th:text="'欢迎用户：'+${loginUser}"></span><span><a th:href="@{/logout}" style="color: red">注销</a></span>
+</p>
+<h1 style="color:snow">欢迎来到图书管理系统</h1>
+<table>  <th>请选择你的管理操作</th></table>
+<table>
+
+
+
+    <tr>
+        <td>
+            <button class="animated-button-2"><a th:href="@{/teacher/book}">图书</a></button></td>
+        <td><button class="animated-button-2"><a th:href="@{/teacher/student}">学生</a></button></td>
+
+    </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <base href="<%=request.getContextPath()%>/"/>
+  <meta charset="UTF-8">
+  <title>我的借阅信息</title>
+  <link rel="stylesheet" th:href="@{/static/css/index_work.css}">
+</head>
+<body>
+
+<p>
+    <span style="color:snow" th:text="'欢迎用户：'+${loginUser}"></span><span><a th:href="@{/logout}" style="color: red">注销</a></span>
+</p>
+
+<table>
+  <tr>
+    <th>图书名称</th>
+    <th>图书展示</th>
+    <th>借阅日期</th>
+    <th>归还日期</th>
+    <th>操作</th>
+  </tr>
+  <tr th:each="borrowResult:${list}">
+<!--    <form th:action="@{'/student/book/back/'}" method="post" id="reg_form">-->
+
+    <td th:text="${borrowResult.borrowedBooks}"></td>
+    <td><img th:src="@{'/photo/'+${borrowResult.picture}}" style="width:100px; height: 100px;"/></td>
+    <td th:text="${borrowResult.borrowTime}"></td>
+    <td th:text="${borrowResult.deadline}"></td>
+    <td>
+<a th:href="@{'/student/book/back/'+${borrowResult.borrowedBooks}+'/'+${loginUser}}" onclick="return confirm('你确定要归还该书吗')">归还</a>
+<!--      <input type="submit" onclick="return confirm('你确定要归还该书吗')">归还</input></td>-->
+
+
+    </td>
+  </tr>
+
+</table>
+<table>
+  <tr>
+    <th th:text="${None}"></th>
+
+  </tr>
+  <tr>
+    <th><a th:href="@{'/student/'+${loginUser}}">返回</a> </th>
+  </tr>
+</table>
+</body>
+</html>
